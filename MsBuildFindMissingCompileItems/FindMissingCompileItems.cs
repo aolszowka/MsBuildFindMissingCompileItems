@@ -108,6 +108,7 @@ namespace MsBuildFindMissingCompileItems
             {
                 ".csproj",
                 ".fsproj",
+                ".sqlproj",
                 ".synproj",
                 ".vbproj",
             };
