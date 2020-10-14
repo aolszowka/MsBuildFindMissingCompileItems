@@ -80,13 +80,8 @@ namespace MsBuildFindMissingCompileItems.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to Scans given directory for MsBuild Projects, evaluating each project&apos;s Compile
-<<<<<<< HEAD
-        ///Tags reporting any missing items..
-=======
-        ///Tags reporting any missing items.
         ///
         ///Arguments:.
->>>>>>> master
         /// </summary>
         internal static string LongDescription {
             get {
