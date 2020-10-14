@@ -52,7 +52,14 @@ namespace MsBuildFindMissingCompileItems
             {
                 if (Directory.Exists(targetDirectory))
                 {
-                    Environment.ExitCode = PrintToConsole(targetDirectory);
+                    (string ProjectName, IEnumerable<string> MissingCompileItems)[] results =
+                        FindMissingCompileItems
+                        .Execute(targetDirectory)
+                        .ToArray();
+
+                    PrintToConsole(results);
+
+                    Environment.ExitCode = results.Length;
                 }
                 else
                 {
@@ -77,18 +84,13 @@ namespace MsBuildFindMissingCompileItems
         /// <summary>
         /// Prints of the Results of FindMissingCompileItems in Plain Text
         /// </summary>
-        /// <returns>The number of projects with missing files</returns>
-        static int PrintToConsole(string targetDirectory)
+        /// <param name="results">The result of <see cref="FindMissingCompileItems.Execute(string)"/></param>
+        static void PrintToConsole(IEnumerable<(string ProjectName, IEnumerable<string> MissingCompileItems)> results)
         {
-            int projectsWithMissingCompileItems = 0;
-
-            IEnumerable<(string ProjectName, IEnumerable<string> MissingCompileItems)> results = FindMissingCompileItems.Execute(targetDirectory);
-
             foreach ((string ProjectName, IEnumerable<string> MissingCompileItems) result in results)
             {
                 if (result.MissingCompileItems.Any())
                 {
-                    projectsWithMissingCompileItems++;
                     Console.WriteLine($"~~{result.ProjectName}~~");
                     foreach (string missingItem in result.MissingCompileItems)
                     {
@@ -96,8 +98,6 @@ namespace MsBuildFindMissingCompileItems
                     }
                 }
             }
-
-            return projectsWithMissingCompileItems;
         }
     }
 }
