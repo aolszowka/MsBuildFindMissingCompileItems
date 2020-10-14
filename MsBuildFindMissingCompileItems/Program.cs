@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="Program.cs" company="Ace Olszowka">
-//  Copyright (c) Ace Olszowka 2019. All rights reserved.
+//  Copyright (c) Ace Olszowka 2019-2020. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -10,71 +10,97 @@ namespace MsBuildFindMissingCompileItems
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Text;
+    using System.Xml.Linq;
 
-    class Program
+    using MsBuildFindMissingCompileItems.Properties;
+
+    using NDesk.Options;
+
+    /// <summary>
+    ///    Toy program to scan a given directory for MSBuild Project Types and
+    /// evaluate their Compile tags for missing items.
+    /// </summary>
+    public class Program
     {
         static void Main(string[] args)
         {
-            int errorCode = 0;
+            string targetDirectory = string.Empty;
+            bool showHelp = false;
+            bool xmlOutput = false;
 
-            if (args.Any())
+            OptionSet p = new OptionSet()
             {
-                string command = args.First().ToLowerInvariant();
+                { "<>", Strings.TargetDirectoryArgument, v => targetDirectory = v },
+                { "xml", Strings.XmlOutputFlag, v => xmlOutput = v != null },
+                { "?|h|help", Strings.HelpDescription, v => showHelp = v != null },
+            };
 
-                if (command.Equals("-?") || command.Equals("/?") || command.Equals("-help") || command.Equals("/help"))
-                {
-                    errorCode = ShowUsage();
-                }
-                else
-                {
-                    if (Directory.Exists(command))
-                    {
-                        string targetPath = command;
-                        errorCode = PrintToConsole(command);
-                    }
-                    else
-                    {
-                        string error = string.Format("The specified path `{0}` is not valid.", command);
-                        Console.WriteLine(error);
-                        errorCode = 1;
-                    }
-                }
+            try
+            {
+                p.Parse(args);
+            }
+            catch (OptionException)
+            {
+                Console.WriteLine(Strings.ShortUsageMessage);
+                Console.WriteLine($"Try `{Strings.ProgramName} --help` for more information.");
+                Environment.Exit(21);
+            }
+
+            if (showHelp || string.IsNullOrEmpty(targetDirectory))
+            {
+                int exitCode = ShowUsage(p);
+                Environment.Exit(exitCode);
             }
             else
             {
-                // This was a bad command
-                errorCode = ShowUsage();
-            }
+                if (Directory.Exists(targetDirectory))
+                {
+                    (string ProjectName, IEnumerable<string> MissingCompileItems)[] results =
+                        FindMissingCompileItems
+                        .Execute(targetDirectory)
+                        .ToArray();
 
-            Environment.Exit(errorCode);
+                    if (xmlOutput)
+                    {
+                        PrintXmlToConsole(results);
+                    }
+                    else
+                    {
+                        PrintToConsole(results);
+                    }
+
+                    Environment.ExitCode = results.Length;
+                }
+                else
+                {
+                    string error = string.Format(Strings.InvalidDirectoryArgument, targetDirectory);
+                    Console.WriteLine(error);
+                    Environment.ExitCode = 9009;
+                }
+            }
         }
 
-        private static int ShowUsage()
+        private static int ShowUsage(OptionSet p)
         {
-            StringBuilder message = new StringBuilder();
-            message.AppendLine("Scans given directory for MsBuild Projects, evaluating each project's Compile Tags reporting any missing items.");
-            message.AppendLine("Invalid Command/Arguments. Valid commands are:");
-            message.AppendLine();
-            message.AppendLine("[directory]    - [READS] Spins through the specified directory and all\n" +
-                               "                 subdirectories for Project files; prints any projects\n" +
-                               "                 which have Compile items that are missing along with\n" +
-                               "                 the file paths that were invalid.");
-            Console.WriteLine(message);
+            Console.WriteLine(Strings.ShortUsageMessage);
+            Console.WriteLine();
+            Console.WriteLine(Strings.LongDescription);
+            Console.WriteLine();
+            Console.WriteLine($"               <>            {Strings.TargetDirectoryArgument}");
+            p.WriteOptionDescriptions(Console.Out);
             return 21;
         }
 
-        static int PrintToConsole(string targetDirectory)
+        /// <summary>
+        /// Prints of the Results of FindMissingCompileItems in Plain Text
+        /// </summary>
+        /// <param name="results">The result of <see cref="FindMissingCompileItems.Execute(string)"/></param>
+        static void PrintToConsole(IEnumerable<(string ProjectName, IEnumerable<string> MissingCompileItems)> results)
         {
-            int projectsWithMissingCompileItems = 0;
-
-            IEnumerable<(string ProjectName, IEnumerable<string> MissingCompileItems)> results = FindMissingCompileItems.Execute(targetDirectory);
-
             foreach ((string ProjectName, IEnumerable<string> MissingCompileItems) result in results)
             {
                 if (result.MissingCompileItems.Any())
                 {
-                    projectsWithMissingCompileItems++;
                     Console.WriteLine($"~~{result.ProjectName}~~");
                     foreach (string missingItem in result.MissingCompileItems)
                     {
@@ -82,8 +108,32 @@ namespace MsBuildFindMissingCompileItems
                     }
                 }
             }
+        }
 
-            return projectsWithMissingCompileItems;
+        /// <summary>
+        /// Prints the Results of FindMissingCompileItems in XML
+        /// </summary>
+        /// <param name="results">The result of <see cref="FindMissingCompileItems.Execute(string)"/></param>
+        static void PrintXmlToConsole(IEnumerable<(string ProjectName, IEnumerable<string> MissingCompileItems)> results)
+        {
+            if (results.Any())
+            {
+                XDocument outputDocument = new XDocument(new XDeclaration("1.0", null, null));
+                outputDocument.Add(new XElement("MsBuildFindMissingCompileItems"));
+
+                foreach ((string ProjectName, IEnumerable<string> MissingCompileItems) result in results)
+                {
+                    XElement projectElement = new XElement("Project", new XAttribute("Name", result.ProjectName));
+                    foreach (string missingItem in result.MissingCompileItems)
+                    {
+                        XElement itemElement = new XElement("Item", missingItem);
+                        projectElement.Add(itemElement);
+                    }
+                    outputDocument.Root.Add(projectElement);
+                }
+
+                Console.WriteLine(outputDocument.ToString());
+            }
         }
     }
 }
