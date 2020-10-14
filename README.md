@@ -15,15 +15,15 @@ If you suspect that rebuilds are happening even when no code has changed run thi
 
 ## Usage
 ```
-Usage: MsBuildFindMissingCompileItems.exe directory
+Usage: MsBuildFindMissingCompileItems C:\DirectoryWithSolutions
 
-Scans given directory for MsBuild Projects, evaluating each project's Compile Tags reporting any missing items.
-Invalid Command/Arguments. Valid commands are:
+Scans given directory for MsBuild Projects, evaluating each project's Compile
+Tags reporting any missing items.
 
-[directory]    - [READS] Spins through the specified directory and all
-                 subdirectories for Project files; prints any projects
-                 which have Compile items that are missing along with
-                 the file paths that were invalid.
+Arguments:
+
+               <>            The directory to scan for MSBuild Projects
+  -?, -h, --help             Show this message and exit
 ```
 
 ## Hacking
@@ -36,3 +36,6 @@ Pull requests and bug reports are welcomed so long as they are MIT Licensed.
 
 ## License
 This tool is MIT Licensed.
+
+## Third Party Licenses
+This project uses other open source contributions see [LICENSES.md](LICENSES.md) for a comprehensive listing.
