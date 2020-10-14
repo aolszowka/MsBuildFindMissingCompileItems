@@ -26,12 +26,10 @@ namespace MsBuildFindMissingCompileItems
         {
             string targetDirectory = string.Empty;
             bool showHelp = false;
-            bool xmlOutput = false;
 
             OptionSet p = new OptionSet()
             {
                 { "<>", Strings.TargetDirectoryArgument, v => targetDirectory = v },
-                { "xml", Strings.XmlOutputFlag, v => xmlOutput = v != null },
                 { "?|h|help", Strings.HelpDescription, v => showHelp = v != null },
             };
 
@@ -60,14 +58,7 @@ namespace MsBuildFindMissingCompileItems
                         .Execute(targetDirectory)
                         .ToArray();
 
-                    if (xmlOutput)
-                    {
-                        PrintXmlToConsole(results);
-                    }
-                    else
-                    {
-                        PrintToConsole(results);
-                    }
+                    PrintToConsole(results);
 
                     Environment.ExitCode = results.Length;
                 }
