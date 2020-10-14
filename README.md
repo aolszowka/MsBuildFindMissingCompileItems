@@ -20,6 +20,8 @@ Usage: MsBuildFindMissingCompileItems C:\DirectoryWithSolutions
 Scans given directory for MsBuild Projects, evaluating each project's Compile
 Tags reporting any missing items.
 
+Arguments:
+
                <>            The directory to scan for MSBuild Projects
   -?, -h, --help             Show this message and exit
 ```
