@@ -10,7 +10,6 @@ namespace MsBuildFindMissingCompileItems
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Xml.Linq;
 
     using MsBuildFindMissingCompileItems.Properties;
 
@@ -98,32 +97,6 @@ namespace MsBuildFindMissingCompileItems
                         Console.WriteLine(missingItem);
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Prints the Results of FindMissingCompileItems in XML
-        /// </summary>
-        /// <param name="results">The result of <see cref="FindMissingCompileItems.Execute(string)"/></param>
-        static void PrintXmlToConsole(IEnumerable<(string ProjectName, IEnumerable<string> MissingCompileItems)> results)
-        {
-            if (results.Any())
-            {
-                XDocument outputDocument = new XDocument(new XDeclaration("1.0", null, null));
-                outputDocument.Add(new XElement("MsBuildFindMissingCompileItems"));
-
-                foreach ((string ProjectName, IEnumerable<string> MissingCompileItems) result in results)
-                {
-                    XElement projectElement = new XElement("Project", new XAttribute("Name", result.ProjectName));
-                    foreach (string missingItem in result.MissingCompileItems)
-                    {
-                        XElement itemElement = new XElement("Item", missingItem);
-                        projectElement.Add(itemElement);
-                    }
-                    outputDocument.Root.Add(projectElement);
-                }
-
-                Console.WriteLine(outputDocument.ToString());
             }
         }
     }
