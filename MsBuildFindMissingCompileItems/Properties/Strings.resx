@@ -125,7 +125,13 @@
   </data>
   <data name="LongDescription" xml:space="preserve">
     <value>Scans given directory for MsBuild Projects, evaluating each project's Compile
+<<<<<<< HEAD
 Tags reporting any missing items.</value>
+=======
+Tags reporting any missing items.
+
+Arguments:</value>
+>>>>>>> master
   </data>
   <data name="ProgramName" xml:space="preserve">
     <value>MsBuildFindMissingCompileItems</value>
