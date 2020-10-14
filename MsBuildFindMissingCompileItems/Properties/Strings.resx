@@ -125,6 +125,7 @@
   </data>
   <data name="LongDescription" xml:space="preserve">
     <value>Scans given directory for MsBuild Projects, evaluating each project's Compile
+Tags reporting any missing items.
 
 Arguments:</value>
   </data>
