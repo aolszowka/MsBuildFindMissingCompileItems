@@ -58,6 +58,7 @@ namespace MsBuildFindMissingCompileItems
                     (string ProjectName, IEnumerable<string> MissingCompileItems)[] results =
                         FindMissingCompileItems
                         .Execute(targetDirectory)
+                        .Where(project => project.MissingCompileItems.Any())
                         .ToArray();
 
                     if (xmlOutput)
