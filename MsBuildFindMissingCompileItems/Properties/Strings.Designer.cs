@@ -100,7 +100,7 @@ namespace MsBuildFindMissingCompileItems.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Usage: MsBuildFindMissingCompileItems C:\DirectoryWithSolutions.
+        ///   Looks up a localized string similar to Usage: MsBuildFindMissingCompileItems C:\DirectoryWithProjects [-xml].
         /// </summary>
         internal static string ShortUsageMessage {
             get {
