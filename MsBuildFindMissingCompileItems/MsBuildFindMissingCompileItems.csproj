@@ -7,6 +7,24 @@
     <ProjectGuid>{D85E8EBC-91FC-4384-AD5B-129989313856}</ProjectGuid>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+  <PropertyGroup>
+    <Authors>Ace Olszowka</Authors>
+    <Description>Find projects that reference Compile Items that do not exist.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageOutputPath>../nupkg</PackageOutputPath>
+    <PackageProjectUrl>https://github.com/aolszowka/MsBuildFindMissingCompileItems</PackageProjectUrl>
+    <PackAsTool>true</PackAsTool>
+    <RepositoryUrl>https://github.com/aolszowka/MsBuildFindMissingCompileItems</RepositoryUrl>
+    <ToolCommandName>project-findmissingcompileitems</ToolCommandName>
+    <VersionPrefix>3.0.0</VersionPrefix>
+    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="FindMissingCompileItems.cs" />
     <Compile Include="MSBuildUtilities.cs" />
