@@ -1,4 +1,6 @@
 # MsBuildFindMissingCompileItems
+![CI - Master](https://github.com/aolszowka/MsBuildFindMissingCompileItems/workflows/CI/badge.svg?branch=master)
+
 Utility to find project files that have missing Compile Items
 
 ## Background
@@ -14,8 +16,15 @@ This tool allows you to quickly scan an entire directory for all MSBuild Project
 If you suspect that rebuilds are happening even when no code has changed run this tool to see if an invalid `<Compile>` item is in the project.
 
 ## Usage
+There are now two ways to run this tool:
+
+1. (Compiled Executable) Invoke the tool via `MsBuildFindMissingCompileItems` and pass the arguments.
+2. (Dotnet Tool) Install this tool using the following command `dotnet tool install MsBuildFindMissingCompileItems` (assuming that you have the nuget package in your feed) then invoke it via `dotnet project-findmissingcompileitems`
+
+In both cases the flags to the tooling are identical:
+
 ```
-Usage: MsBuildFindMissingCompileItems C:\DirectoryWithSolutions
+Usage: C:\DirectoryWithProjects [-xml]
 
 Scans given directory for MsBuild Projects, evaluating each project's Compile
 Tags reporting any missing items.
